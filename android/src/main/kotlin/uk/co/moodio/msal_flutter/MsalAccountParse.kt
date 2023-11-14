@@ -14,7 +14,9 @@ class MsalAccountParse {
             val map = HashMap<String, Any?>()
             map["username"] = account.username
             map["identifier"] = account.id
-            map["accountClaims"] =parseClaims( account.claims as Map<String, Any>)
+            if (account.claims != null) {
+                map["accountClaims"] = parseClaims( account.claims as Map<String, Any>)
+            }
 
             return map
         }

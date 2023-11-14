@@ -30,7 +30,7 @@ class MSALAccount {
           username: map['username'],
           identifier: map['identifier'] ?? '',
           environment: map['environment'],
-          accountClaims: Map<String, dynamic>.from(map['accountClaims']),
+          accountClaims: Map<String, dynamic>.from(map['accountClaims'] ?? {}),
           isSSOAccount: map['isSSOAccount'] ?? false,
         );
 }

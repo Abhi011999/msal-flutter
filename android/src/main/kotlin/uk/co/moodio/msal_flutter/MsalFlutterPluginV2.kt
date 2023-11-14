@@ -356,6 +356,7 @@ class MsalFlutterPluginV2 : FlutterPlugin, MethodChannel.MethodCallHandler, Acti
             "invalid_grant" -> "INVALID_GRANT"
             "unknown_authority" -> "INVALID_AUTHORITY"
             "unknown_error" -> "UNKNOWN"
+            "no_account_found" -> "NO_ACCOUNT"
             else -> "AUTH_ERROR"
         }
 
