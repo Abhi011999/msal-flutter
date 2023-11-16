@@ -60,24 +60,24 @@ public class SwiftMsalFlutterPluginV2: NSObject, FlutterPlugin {
         }
     }
 
-    private func loadAccounts(result: @escaping FlutterResult,dict: NSDictionary?){
-
-        self.applicationContext!.accountsFromDevice(for: MSALAccountEnumerationParameters.fromDict(dict: dict), completionBlock:{(accounts, error) in
-            if error != nil
-            {
-                result(FlutterError(code: "NO_ACCOUNTS", message: "no recent accounts", details: nil))
-                //Handle error
+    private func loadAccounts(result: @escaping FlutterResult, dict: NSDictionary?) {
+        self.applicationContext!.accountsFromDevice(for: MSALAccountEnumerationParameters.fromDict(dict: dict), completionBlock: { (accounts, error) in
+            if let error = error {
+                print("Error fetching accounts: \(error.localizedDescription)")
+                result(FlutterError(code: "NO_ACCOUNTS", message: "Failed to fetch accounts", details: nil))
+                // Handle error
+            } else {
+                if let accountObjs = accounts {
+                    let map = accountObjs.map { $0.nsDictionary } as [NSDictionary]
+                    result(map)
+                } else {
+                    print("No accounts found")
+                    result(FlutterError(code: "NO_ACCOUNTS", message: "No accounts found", details: nil))
+                }
             }
-            guard let accountObjs = accounts else {
-                result(FlutterError(code: "NO_ACCOUNTS", message: "no recent accounts", details: nil))
-                return}
-            let map = accountObjs.map{$0.nsDictionary} as [NSDictionary]
-
-            result(map)
-
         });
-
     }
+
 
     private func acquireToken(result: @escaping FlutterResult, dict: NSDictionary) {
         guard let applicationContext = applicationContext else {

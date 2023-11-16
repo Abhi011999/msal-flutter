@@ -9,8 +9,7 @@ import 'exceptions/msal_scope_error_exception.dart';
 class MSALPublicClientApplication {
   static const MethodChannel _channel = const MethodChannel('msal_flutter');
 
-  static Future<MSALPublicClientApplication> createPublicClientApplication(
-      MSALPublicClientApplicationConfig config) async {
+  static Future<MSALPublicClientApplication> createPublicClientApplication(MSALPublicClientApplicationConfig config) async {
     try {
       final clientApplication = MSALPublicClientApplication();
       await clientApplication._initialize(config);
@@ -22,8 +21,7 @@ class MSALPublicClientApplication {
 
   Future<bool> _initialize(MSALPublicClientApplicationConfig config) async {
     try {
-      final result =
-          await _channel.invokeMethod<bool>('initialize', config.toMap());
+      final result = await _channel.invokeMethod<bool>('initialize', config.toMap());
       return result ?? false;
     } on PlatformException catch (e) {
       throw _convertException(e);
@@ -31,69 +29,48 @@ class MSALPublicClientApplication {
   }
 
   /// this is `ios` only you need to set web param before acquireing token the client
-  Future<bool> initWebViewParams(
-      MSALWebviewParameters webviewParameters) async {
+  Future<bool> initWebViewParams(MSALWebviewParameters webviewParameters) async {
     try {
       if (Platform.isAndroid) {
         return true;
       }
-      final result = await _channel.invokeMethod<bool>(
-          'initWebViewParams', webviewParameters.toMap());
+      final result = await _channel.invokeMethod<bool>('initWebViewParams', webviewParameters.toMap());
       return result ?? false;
     } on PlatformException catch (e) {
       throw _convertException(e);
     }
   }
 
-  Future<List<MSALAccount>?> loadAccounts(
-      [MSALAccountEnumerationParameters? enumerationParameters]) async {
+  Future<List<MSALAccount>?> loadAccounts([MSALAccountEnumerationParameters? enumerationParameters]) async {
     try {
-      final result = await _channel.invokeMethod<List>(
-          'loadAccounts', enumerationParameters?.toMap());
-      return result
-          ?.map((e) => MSALAccount.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
+      final result = await _channel.invokeMethod<List>('loadAccounts', enumerationParameters?.toMap());
+      return result?.map((e) => MSALAccount.fromMap(Map<String, dynamic>.from(e))).toList();
     } on PlatformException catch (e) {
       throw _convertException(e);
     }
   }
 
-  Future<MSALResult?> acquireToken(
-      MSALInteractiveTokenParameters interactiveTokenParameters) async {
+  Future<MSALResult?> acquireToken(MSALInteractiveTokenParameters interactiveTokenParameters) async {
     try {
-      final result = await _channel.invokeMethod(
-          'acquireToken', interactiveTokenParameters.toMap());
-      return result != null
-          ? MSALResult.fromMap(Map<String, dynamic>.from(result))
-          : null;
+      final result = await _channel.invokeMethod('acquireToken', interactiveTokenParameters.toMap());
+      return result != null ? MSALResult.fromMap(Map<String, dynamic>.from(result)) : null;
     } on PlatformException catch (e) {
       throw _convertException(e);
     }
   }
 
-  Future<MSALResult?> acquireTokenSilent(
-      MSALSilentTokenParameters silentTokenParameters,
-      MSALAccount? account) async {
+  Future<MSALResult?> acquireTokenSilent(MSALSilentTokenParameters silentTokenParameters, MSALAccount? account) async {
     try {
-      final result = await _channel.invokeMethod('acquireTokenSilent', {
-        'accountId': account?.identifier,
-        'tokenParameters': silentTokenParameters.toMap()
-      });
-      return result != null
-          ? MSALResult.fromMap(Map<String, dynamic>.from(result))
-          : null;
+      final result = await _channel.invokeMethod('acquireTokenSilent', {'accountId': account?.identifier, 'tokenParameters': silentTokenParameters.toMap()});
+      return result != null ? MSALResult.fromMap(Map<String, dynamic>.from(result)) : null;
     } on PlatformException catch (e) {
       throw _convertException(e);
     }
   }
 
-  Future<bool> logout(
-      MSALSignoutParameters signoutParameters, MSALAccount account) async {
+  Future<bool> logout(MSALSignoutParameters signoutParameters, MSALAccount account) async {
     try {
-      final result = await _channel.invokeMethod<bool>('logout', {
-        'accountId': account.identifier,
-        'signoutParameters': signoutParameters.toMap()
-      });
+      final result = await _channel.invokeMethod<bool>('logout', {'accountId': account.identifier, 'signoutParameters': signoutParameters.toMap()});
       return result ?? false;
     } on PlatformException catch (e) {
       throw _convertException(e);
@@ -107,6 +84,7 @@ class MSALPublicClientApplication {
       case "NO_SCOPE":
         return MsalInvalidScopeException();
       case "NO_ACCOUNT":
+      case "NO_ACCOUNTS":
         return MsalNoAccountException();
       case "NO_CLIENTID":
         return MsalInvalidConfigurationException("Client Id not set");
@@ -119,8 +97,7 @@ class MSALPublicClientApplication {
       case "INVALID_REQUEST":
         return MsalInvalidRequestException("Invalid request");
       case "CONFIG_ERROR":
-        return MsalInvalidConfigurationException(
-            "Invalid configuration, please correct your settings and try again");
+        return MsalInvalidConfigurationException("Invalid configuration, please correct your settings and try again");
       case "NO_CLIENT":
         return MsalUninitializedException();
       case "CHANGED_CLIENTID":
